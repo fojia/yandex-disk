@@ -1,24 +1,27 @@
 <?php
 ini_set ( 'display_errors', true );
 class Disk {
-	private $token = '77ec43e8a3724d6fb29d20412e276d57';
+	private $token = '';
 	var $file = '';
-	var $pathDisk = '/test/';
+	var $pathDisk = '';
 	var $headers = '';
+	var $method = "GET";
+	function __construct($token = "null") {
+		$this->token = $token;
+		$this->setHeaders ();
+	}
 	function setHeaders() {
 		$this->headers = array (
 				'Accept: application/json',
 				"Authorization: OAuth {$this->token}" 
 		);
 	}
-	function getUploadUrl() {
-		$url = "https://cloud-api.yandex.net:443/v1/disk/resources/upload?path=" . urlencode ( $this->pathDisk . $this->file ) . "&fields=href&overwrite=true";
-		
+	function getData($url) {
 		$curl = curl_init ();
 		curl_setopt ( $curl, CURLOPT_URL, $url );
+		curl_setopt ( $curl, CURLOPT_CUSTOMREQUEST, $this->method );
 		curl_setopt ( $curl, CURLOPT_HTTPHEADER, $this->headers );
 		curl_setopt ( $curl, CURLOPT_HEADER, false );
-		curl_setopt ( $curl, CURLOPT_POST, false );
 		curl_setopt ( $curl, CURLOPT_RETURNTRANSFER, true );
 		$result = curl_exec ( $curl );
 		curl_close ( $curl );
@@ -26,15 +29,23 @@ class Disk {
 		if ($result) {
 			return json_decode ( $result );
 		}
+		
 		return false;
 	}
-	function uploadFile($file) {
-		$this->setHeaders ();
-		$this->file = $file;
+	function getUploadUrl() {
+		$url = "https://cloud-api.yandex.net:443/v1/disk/resources/upload?path=" . urlencode ( $this->pathDisk . $this->file ) . "&fields=href&overwrite=true";
+		return $this->getData ( $url );
+	}
+	function uploadFile($file, $path) {
 		$uploadUrl = $this->getUploadUrl ();
+		if ($uploadUrl == false) {
+			return false;
+		}
+		
+		$this->file = $file;
+		$this->$pathDisk = $path;
 		$filesize = filesize ( $this->file );
 		$datafile = fopen ( $this->file, 'rb' );
-		
 		$curl = curl_init ();
 		curl_setopt ( $curl, CURLOPT_HTTPHEADER, $this->headers );
 		curl_setopt ( $curl, CURLOPT_BINARYTRANSFER, true );
@@ -46,8 +57,21 @@ class Disk {
 		curl_setopt ( $curl, CURLOPT_UPLOAD, true );
 		$result = curl_exec ( $curl );
 		curl_close ( $curl );
-		print_r ( $result );
+	}
+	function getFileUrl($path) {
+		$url = "https://cloud-api.yandex.net:443/v1/disk/resources/download?path=" . urlencode ( $path ) . "&fields=href";
+		$link = $this->getData ( $url );
+		return $link->href;
+	}
+	function deleteFile($path, $permanently = false) {
+		if ($permanently) {
+			$permanently = "true";
+		} else {
+			$permanently = "false";
+		}
+		$this->method = "DELETE";
+		$url = "https://cloud-api.yandex.net:443/v1/disk/resources?path=" . urlencode ( $path ) . "&permanently={$permanently}";
+		return $this->getData ( $url );
 	}
 }
-$app = new Disk ();
-$app->uploadFile ( '1.jpg' );
+
