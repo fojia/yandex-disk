@@ -37,13 +37,14 @@ class Disk {
 		return $this->getData ( $url );
 	}
 	function uploadFile($file, $path) {
+		$this->file = $file;
+		$this->pathDisk = $path;
 		$uploadUrl = $this->getUploadUrl ();
+		
 		if ($uploadUrl == false) {
 			return false;
 		}
 		
-		$this->file = $file;
-		$this->$pathDisk = $path;
 		$filesize = filesize ( $this->file );
 		$datafile = fopen ( $this->file, 'rb' );
 		$curl = curl_init ();
