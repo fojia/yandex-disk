@@ -1,5 +1,5 @@
 # yandex-disk
-
+Simple script for upload files to yandex-disk
 
 ``$app = new Disk($token)``  	
 
