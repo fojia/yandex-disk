@@ -1,19 +1,19 @@
 # yandex-disk
-Создаем экземпляр класса и передаем в конструктор токен
 
-	$app= new Disk($token)
 
-Функция для загрузки локального файла $fileName в папку $path на яндекс диск. 
+``$app = new Disk($token)``  	
 
-	$app->uploadFile($fileName, $path) 
+Upload file ot disk by path 
+
+``$app->uploadFile($fileName, $path)``	 
 	
-Чтобы получить ссылку на файл нужно вызватть getFileUrl и передать в качестве параметра путь к файлу
+Get filepath by path in yandex-disk
 
-	$app->getFileUrl ( $path );
+``$app->getFileUrl ( $path );``	
 	
-Удалить файл и папку первый $path - путь к файлу, второй параметр не обязательный, если его не указывать, то  файл удалиться в корзину, если поставить true то фай удалиться навсегда.
+Delete fily by path from yandex-disk 
 
-	$app->deleteFile($path, [true]);
+``$app->deleteFile($path, [true]);``
 
 
 

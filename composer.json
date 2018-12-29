@@ -1,0 +1,15 @@
+{
+    "name": "fojia/yandex-disk",
+    "description": "Upload/Download/Delete script for yandex-disk",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Vladimir Chairkin",
+            "email": "vladimir.chairckin@yandex.ru"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "php": ">=5.3"
+    }
+}
